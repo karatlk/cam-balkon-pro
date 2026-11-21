@@ -1,0 +1,197 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const CamBalkonApp());
+}
+
+class CamBalkonApp extends StatelessWidget {
+  const CamBalkonApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Cam Balkon Pro',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const HesaplamaSayfasi(),
+    );
+  }
+}
+
+class HesaplamaSayfasi extends StatefulWidget {
+  const HesaplamaSayfasi({super.key});
+
+  @override
+  State<HesaplamaSayfasi> createState() => _HesaplamaSayfasiState();
+}
+
+class _HesaplamaSayfasiState extends State<HesaplamaSayfasi> {
+  final genislikController = TextEditingController();
+  final solController = TextEditingController();
+  final ortaController = TextEditingController();
+  final sagController = TextEditingController();
+
+  int kanatSayisi = 0;
+  double ortYukseklik = 0;
+  double camGenislik = 0;
+  double camYukseklik = 0;
+  double camAlani = 0;
+
+  void hesapla() {
+    double genislik =
+        double.tryParse(genislikController.text) ?? 0;
+
+    double sol =
+        double.tryParse(solController.text) ?? 0;
+
+    double orta =
+        double.tryParse(ortaController.text) ?? 0;
+
+    double sag =
+        double.tryParse(sagController.text) ?? 0;
+
+    ortYukseklik = (sol + orta + sag) / 3;
+
+    kanatSayisi = (genislik / 650).ceil();
+
+    camGenislik = (genislik / kanatSayisi) - 10;
+
+    camYukseklik = ortYukseklik - 20;
+
+    camAlani =
+        (camGenislik * camYukseklik * kanatSayisi) /
+            1000000;
+
+    setState(() {});
+  }
+
+  Widget bilgiKart(String baslik, String deger) {
+    return Card(
+      child: ListTile(
+        title: Text(baslik),
+        trailing: Text(
+          deger,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.blue,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Cam Balkon Pro"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              "Ölçü Girişi",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            TextField(
+              controller: genislikController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Toplam Genişlik (mm)",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: solController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Sol Yükseklik (mm)",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: ortaController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Orta Yükseklik (mm)",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            TextField(
+              controller: sagController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Sağ Yükseklik (mm)",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                onPressed: hesapla,
+                child: const Text(
+                  "HESAPLA",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            if (kanatSayisi > 0) ...[
+              bilgiKart(
+                  "Kanat Sayısı", "$kanatSayisi Adet"),
+
+              bilgiKart(
+                  "Cam Ölçüsü",
+                  "${camGenislik.toStringAsFixed(0)} x ${camYukseklik.toStringAsFixed(0)} mm"),
+
+              bilgiKart(
+                  "Toplam Cam Alanı",
+                  "${camAlani.toStringAsFixed(2)} m²"),
+
+              bilgiKart(
+                  "Üst Ray",
+                  "${genislikController.text} mm"),
+
+              bilgiKart(
+                  "Alt Ray",
+                  "${genislikController.text} mm"),
+
+              bilgiKart(
+                  "Teker",
+                  "${kanatSayisi * 2} Adet"),
+
+              bilgiKart(
+                  "Conta",
+                  "${(double.parse(genislikController.text) / 1000 * 8).toStringAsFixed(1)} m"),
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+}
